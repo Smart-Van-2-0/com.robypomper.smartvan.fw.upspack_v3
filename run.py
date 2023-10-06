@@ -7,11 +7,11 @@ from datetime import datetime, timedelta
 import time
 import signal
 
-from fw_victron.ve_device import VEDevice, VEDeviceSimulator
-from fw_victron.dbus_obj import DBusObject
-from fw_victron.mappings import PROPS_CODES
-from fw_victron.calculated import CALCULATED_PROPS
-from fw_victron.dbus_daemon import *
+from fw_upspack_v3.device import VEDevice, VEDeviceSimulator
+from fw_upspack_v3.dbus_obj import DBusObject
+from fw_upspack_v3.mappings import PROPS_CODES
+from fw_upspack_v3._calculated import CALCULATED_PROPS
+from fw_upspack_v3.dbus_daemon import *
 
 """ Name of the current script """
 FW_NAME = "FW Victron"

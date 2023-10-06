@@ -79,10 +79,10 @@ protocol via Serial cable.
 On VE.Direct side, this script can read and handle all properties defined into
 the [VE.Direct-Protocol-3.33.pdf](https://www.victronenergy.com/upload/documents/VE.Direct-Protocol-3.33.pdf)
 from Victron. The full list of implemented properties, but also the known PIDs
-list can be found into the [`mappings.py`](fw_victron/mappings.py) file.
+list can be found into the [`mappings.py`](fw_upspack_v3/mappings.py) file.
 
 On the DBus side, only the "SmartSolar MPPT" and "SmartSolar MPPT VE.Can"
 devices are defined. Other device types missing their DBus object definition at
-[`dbus_definitions.py`](fw_victron/dbus_definitions.py).<br/>
+[`dbus_definitions.py`](fw_upspack_v3/_dbus_descs.py).<br/>
 When this script is **connected to an unsupported device type, then it raise an
 exception and exit**.
