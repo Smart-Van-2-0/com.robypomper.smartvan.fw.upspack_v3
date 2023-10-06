@@ -7,30 +7,32 @@ from datetime import datetime, timedelta
 import time
 import signal
 
-from fw_upspack_v3.device import VEDevice, VEDeviceSimulator
-from fw_upspack_v3.dbus_obj import DBusObject
-from fw_upspack_v3.mappings import PROPS_CODES
-from fw_upspack_v3._calculated import CALCULATED_PROPS
-from fw_upspack_v3.dbus_daemon import *
+from fw_upspack_v3.ups.device import Device
+from fw_upspack_v3.ups.simulator import DeviceSimulator
+from fw_upspack_v3.dbus.obj import DBusObject
+from fw_upspack_v3.dbus.daemon import *
+from fw_upspack_v3.ups.mappings import PROPS_CODES, CALC_PROPS_CODES
 
 """ Name of the current script """
-FW_NAME = "FW Victron"
+FW_NAME = "FW UPS Pack v3"
+""" Description of the current script """
+FW_DESC = "Python script as {} firmware".format(FW_NAME)
 """ Group of the current script """
-FW_GROUP = "com.robypomper.smartvan.fw.victron"
+FW_GROUP = "com.robypomper.smartvan.fw.ups"
 """ Version of the current script """
-FW_VERSION = "1.0.2-DEV"
+FW_VERSION = "1.0.0-DEV"
 """ Value to use as default serial port """
-DEF_SERIAL_PORT = "/dev/ttyUSB0"
+DEF_SERIAL_PORT = "/dev/ttyAMA0"
 """ Value to use as default serial port speed """
-DEF_SERIAL_SPEED = 19200
+DEF_SERIAL_SPEED = 9600
 """ Value to use as default DBus name """
-DEF_DBUS_NAME = "com.victron"
-""" Value to use as default DBus object path """
+DEF_DBUS_NAME = "com.upspack"
+""" Value to use as default DBus object path, if none  """
 DEF_DBUS_OBJ_PATH = None
 """ Value to use as default DBus object interface """
 DEF_DBUS_IFACE = None
 """ Maximum time a property can be stored on the cache before sending his value again. """
-CACHE_TIME_TO_RESET = timedelta(hours=0, minutes=1, seconds=0)
+CACHE_TIME_TO_RESET = timedelta(hours=0, minutes=10, seconds=0)
 """ Directory name where store log files """
 LOGGER_FOLDER = "logs"
 """ Log level for file messages """
@@ -56,8 +58,9 @@ EXIT_INIT_DBUS = 2
 
 # default logger, used if _setup_logging() was not called
 logger = logging.getLogger()
-must_shutdown=False
-properties_cache={}
+dev_global: Optional[Device] = None
+must_shutdown = False
+properties_cache = {}
 
 
 def _full_version():
@@ -69,14 +72,14 @@ def _full_version():
 def _cli_args():
     """ Configures, parses and returns arguments from cmd line. """
 
-    parser = argparse.ArgumentParser(description='VE.Direct Serial to DBus bridge')
+    parser = argparse.ArgumentParser(description=FW_DESC)
     group01 = parser.add_argument_group()
     group01.add_argument('--port', default=DEF_SERIAL_PORT,
                          help='Serial port')
     group01.add_argument('--speed', type=int, default=DEF_SERIAL_SPEED,
                          help='Serial port speed')
     group01.add_argument('--simulate', default=False, action="store_true", required=False,
-                         help='Simulate a VEDevice with id \'0xA060\'')
+                         help='Simulate a Device with id \'0xA060\'')
 
     group02 = parser.add_argument_group()
     group02.add_argument('--dbus-name', default=DEF_DBUS_NAME,
@@ -138,49 +141,54 @@ def _init_logging(dev, debug, quiet):
     return root_logger
 
 
-def _init_ve_device(port, speed, wait_connection=True, simulate_dev=False):
-    """ Init and configure VE Device. """
+def _init_device(port, speed, wait_connection=True, simulate_dev=False) -> Device:
+    """ Init and configure Device. """
 
-    global must_shutdown
+    global must_shutdown, dev_global
 
     if simulate_dev:
-        logger.debug("Simulate device '{} at {}'...".format(port, speed))
-        return VEDeviceSimulator(port, speed)
+        logger.debug("Simulate device")
+        return DeviceSimulator(port, speed)
 
-    logger.debug("Connecting to '{} at {}'...".format(port, speed))
-    dev = VEDevice(port, speed)
+    logger.info("Connecting to '{} at {}'...".format(port, speed))
+    dev = Device(port, speed, False)
+    dev_global = dev
+    logger.debug("Read first data from device...")
+    dev.refresh()
 
-    if not dev.is_connected and wait_connection:
-        logger.warning("Port '{}' not available, retry in {} seconds. Press (Ctrl+C) to exit.".format(port, CONN_RETRY))
+    if must_shutdown:
+        logger.warning("Received terminate signal during Device initialization, exit.")
+    elif not dev.is_connected and wait_connection:
+        logger.warning("Device not available, retry in {} seconds. Press (Ctrl+C) to exit.".format(CONN_RETRY))
         try:
-            must_shutdown=False
+            must_shutdown = False
             while not dev.is_connected and not must_shutdown:
                 time.sleep(CONN_RETRY)
                 dev.refresh()
                 if not dev.is_connected:
-                    logger.debug("Port '{}' still not available, retry in {} seconds.".format(port, CONN_RETRY))
+                    logger.debug("Device still not available, retry in {} seconds.".format(CONN_RETRY))
         except KeyboardInterrupt:
             logger.info("Terminating required by the user.")
             exit(EXIT_INIT_TERMINATED)
 
     if dev.is_connected:
-        logger.info("Connected to '{}' of '{}' type.".format(dev.device_model, dev.device_type))
+        logger.info("Connected to Device '{}'.".format(dev.device_pid))
     else:
-        logger.info("Initialized VEDevice at port '{}', but not connected.".format(port))
+        logger.info("Initialized Device, but not connected.")
     return dev
 
 
-def _init_dbus_object(dbus_name, dbus_obj_path, dbus_iface, pid):
+def _init_dbus_object(dbus_name, dev_id, dbus_obj_path, dbus_iface) -> DBusObject:
     """ Init and configure DBus object. """
 
     try:
-        return DBusObject(dbus_name, pid, dbus_obj_path, dbus_iface, False)
+        return DBusObject(dbus_name, dev_id, dbus_obj_path, dbus_iface)
     except NotImplementedError as err:
         logger.fatal("Error initializing DBus object: {}".format(err))
         exit(EXIT_INIT_DBUS)
 
 
-def _main_loop(ve_dev, dbus_obj):
+def _main_loop(dev, dbus_obj):
     """ Current script's main loop. """
 
     global must_shutdown
@@ -190,15 +198,15 @@ def _main_loop(ve_dev, dbus_obj):
     must_shutdown = False
     while not must_shutdown:
         try:
-            ve_dev.refresh(True)
-            # print("{}/{}# [{}CONNECTED]: {}".format(ve_dev.device_model, ve_dev.device_serial,
-            #                                        "" if ve_dev.is_connected else "NOT ", ve_dev.battery_volts))
+            dev.refresh(True)
+            # print("{}/{}# [{}CONNECTED]: {}".format(dev.device_model, dev.device_serial,
+            #                                        "" if dev.is_connected else "NOT ", dev.battery_volts))
 
-            if len(ve_dev.latest_data) == 0:
+            if len(dev.latest_data) == 0:
                 logger.warning("No data read, nothing to update")
             else:
-                for property_code in ve_dev.latest_data:
-                    _process_property(ve_dev, dbus_obj, property_code)
+                for property_code in dev.latest_data:
+                    _process_property(dev, dbus_obj, property_code)
 
         except KeyboardInterrupt:
             logger.info("Terminating required by the user.")
@@ -209,7 +217,7 @@ def _main_loop(ve_dev, dbus_obj):
             traceback.print_exc()
 
         try:
-            time.sleep(LOOP_SLEEP if ve_dev.is_connected else CONN_RETRY)
+            time.sleep(LOOP_SLEEP if dev.is_connected else CONN_RETRY)
 
         except KeyboardInterrupt:
             logger.info("Terminating required by the user.")
@@ -218,18 +226,18 @@ def _main_loop(ve_dev, dbus_obj):
     logger.info(FW_NAME + " Main Loop terminated.")
 
 
-def _process_property(ve_dev, dbus_obj, property_code):
+def _process_property(dev, dbus_obj, property_code):
     """
-    Get and parse the VE Device's property and, if it used to elaborate a
+    Get and parse the Device's property and, if it used to elaborate a
     calculated value, the calculated value will be refreshed.
     """
 
-    property_value_raw = ve_dev.latest_data[property_code]
+    property_value_raw = dev.latest_data[property_code]
     try:
         property_name = PROPS_CODES[property_code]['name']
         property_parser = PROPS_CODES[property_code]['parser']
     except KeyError:
-        logger.warning("Read unknown property code '{}', skipped.".format(property_code))
+        logger.warning("Read unknown property code '{}' <{}>, skipped.".format(property_code, property_value_raw))
         return
 
     try:
@@ -244,12 +252,12 @@ def _process_property(ve_dev, dbus_obj, property_code):
             'time': datetime.now()
         }
         dbus_obj.update_property(property_name, property_value)
-        _update_property_derivatives(dbus_obj, property_name, property_value)
+        _update_property_derivatives(dbus_obj, property_name)
 
     except ValueError:
-        logger.warning("Property '{}={}' raw value malformed, skipped.".format(property_name, property_value_raw))
+        logger.warning("Property '{}' <{}> raw value malformed, skipped.".format(property_name, property_value_raw))
     except TypeError:
-        logger.warning("DBus property '{}' malformed, skipped.".format(property_name))
+        logger.warning("DBus property '{}' <{}> malformed, skipped.".format(property_name, property_value_raw))
     except KeyError:
         logger.warning("Property '{}' not used by current DBus object definition, skipped.".format(property_name))
     except KeyboardInterrupt as err:
@@ -261,13 +269,13 @@ def _process_property(ve_dev, dbus_obj, property_code):
         traceback.print_exc()
 
 
-def _update_property_derivatives(dbus_obj, property_name, property_value):
-    """ Get and parse the VE Device's property and notify his update on DBus. """
+def _update_property_derivatives(dbus_obj, property_name):
+    """ Get and parse the Device's property and notify his update on DBus. """
 
-    for c_property_name in CALCULATED_PROPS:
+    for c_property_name in CALC_PROPS_CODES:
         try:
-            if property_name in CALCULATED_PROPS[c_property_name]['depends_on']:
-                c_property_value = CALCULATED_PROPS[c_property_name]['calculator'](properties_cache)
+            if property_name in CALC_PROPS_CODES[c_property_name]['depends_on']:
+                c_property_value = CALC_PROPS_CODES[c_property_name]['calculator'](properties_cache)
                 if c_property_value is None:
                     logger.debug("No value calculated for '{}', skipped".format(c_property_name))
                     continue
@@ -287,15 +295,16 @@ def _update_property_derivatives(dbus_obj, property_name, property_value):
                 }
                 # Update property
                 dbus_obj.update_property(c_property_name, c_property_value)
-                _update_property_derivatives(dbus_obj, c_property_name, c_property_value)
+                _update_property_derivatives(dbus_obj, c_property_name)
 
         except Exception as err:
             logger.warning("Error calculating '{}' property: {}".format(c_property_name, err))
             # uncomment for calculators development
-            #print("###################################")
-            #import traceback
-            #traceback.print_exc()
-            #print("###################################")
+            # print("###################################")
+            # import traceback
+            # traceback.print_exc()
+            # print("###################################")
+
 
 def _register_kill_signals():
     signal.signal(signal.SIGINT, __handle_kill_signals)
@@ -308,46 +317,56 @@ def __handle_kill_signals(signo, _stack_frame):
     logger.info("Received `{}` signal. Shutting down...".format(signo))
     # SIGINT    2   <= Ctrl+C
     # SIGTERM   15  <= kill PID
+    if dev_global is not None:
+        dev_global.terminate()
     must_shutdown = True
 
 
 def main(port, speed, dbus_name, obj_path=None, dbus_iface=None, simulate_dev=False):
-    """ Initialize a VE Device to read data and a DBus Object to share collected data. """
+    """ Initialize a Device to read data and a DBus Object to share collected data. """
     _register_kill_signals()
 
-    # Init VE Device
+    # Init Device
     try:
-        ve_dev = _init_ve_device(port, speed, True, simulate_dev)
-        if not ve_dev.is_connected and must_shutdown:
+        dev = _init_device(port, speed, True, simulate_dev)
+        if not dev.is_connected and must_shutdown:
             exit(0)
     except Exception as err:
-        logger.warning("Error on initializing VE.Direct Device: " + str(err))
+        logger.warning("Error on initializing Device: " + str(err))
+        import traceback
+        traceback.print_exc()
         exit(-1)
 
     # Init DBus Object
     try:
-        obj_path = obj_path if obj_path is not None else "/" + ve_dev.device_type_code
-        pid = ve_dev.device_pid
-        dbus_obj = _init_dbus_object(dbus_name, obj_path, dbus_iface, pid)
+        obj_path = obj_path if obj_path is not None else "/" + dev.device_type_code
+        dev_id = dev.device_pid
+        dbus_obj = _init_dbus_object(dbus_name, dev_id, obj_path, dbus_iface)
     except Exception as err:
         logger.warning("Error on initializing DBus Object: " + str(err))
+        import traceback
+        traceback.print_exc()
         exit(-1)
 
     # Publish on DBus
     try:
+        os.environ['DISPLAY'] = "0.0"
         dbus = get_dbus()
-        start_dbus_thread()
-        dbus_obj.publish(dbus)
     except Exception as err:
         logger.warning("Error on publish DBus Object: " + str(err))
         try:
             stop_dbus_thread()
         except:
             pass
+        import traceback
+        traceback.print_exc()
         exit(-1)
 
+    start_dbus_thread()
+    dbus_obj.publish(dbus)
+
     try:
-        _main_loop(ve_dev, dbus_obj)
+        _main_loop(dev, dbus_obj)
     except Exception as err:
         logger.warning("Error on main thread: " + str(err))
         exit(-1)
