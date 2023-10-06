@@ -3,17 +3,19 @@
 import logging
 from pydbus.generic import signal
 
-from .mappings import *
+from fw_upspack_v3.ups.mappings import *
+
 
 logger = logging.getLogger()
 
 
 class DBusObject:
+
     PropertiesChanged = signal()
 
     def __init__(self, dbus_name, pid, dbus_obj_path=None, dbus_iface=None, enable_cache=False):
         if pid not in PID:
-            raise NotImplementedError("Device with '{}' PID not implemented."
+            raise NotImplementedError("Device with '{}' PIS not implemented."
                                       .format(pid))
 
         self._cached_properties = {} if enable_cache else None

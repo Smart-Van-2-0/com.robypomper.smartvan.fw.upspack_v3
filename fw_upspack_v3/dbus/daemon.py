@@ -1,13 +1,15 @@
 #!/usr/bin/python3
 
 import logging
+from typing import Optional
+
 from pydbus import SessionBus
 from gi.repository import GLib
 from threading import Thread
 
 _dbus = None
-_loop = None
-_thread = None
+_loop: Optional[GLib.MainLoop] = None
+_thread: Optional[Thread] = None
 
 logger = logging.getLogger()
 
