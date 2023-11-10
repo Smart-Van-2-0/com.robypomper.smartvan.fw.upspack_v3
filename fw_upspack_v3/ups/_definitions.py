@@ -3,7 +3,7 @@
 # List of supported devices' types
 # Strings used as default value to populate the PID dict
 
-DEV_TYPE_UPSmart_V32P = "UPS Smart"
+DEV_TYPE_UPSSmart_V32P = "UPS Smart v3.2P"
 
 
 # List of supported dbus ifaces

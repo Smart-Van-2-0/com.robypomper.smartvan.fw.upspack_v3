@@ -6,9 +6,9 @@ from ._dbus_descs import *
 from ._parsers import *
 
 
-# Given an PID, this object returns all his info and meta-data
+# Given an VERSION, this object returns all his info and meta-data
 PID = {
-    "V3.2P": {"model": "UPS Smart", "type": DEV_TYPE_UPSmart_V32P,
+    "V3.2P": {"model": "UPS Smart", "type": DEV_TYPE_UPSSmart_V32P,
               "dbus_iface": DEV_IFACE_UPSSmart, "dbus_desc": DEV_DBUS_DESC_UPSSmart},
 }
 

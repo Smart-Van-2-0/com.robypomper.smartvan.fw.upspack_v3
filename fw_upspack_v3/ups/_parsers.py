@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 
-
 def props_parser_vin(raw_value: str) -> bool:
     try:
         if raw_value.upper() == "GOOD":
