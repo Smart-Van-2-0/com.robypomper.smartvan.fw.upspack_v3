@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
-from .device import Device
-from .mappings import *
-from ..commons import regenerateValue
+from fw_upspack_v3.ups.device import Device
+from fw_upspack_v3.ups.mappings import *
+from fw_upspack_v3.commons import regenerateValue
 
 
 class DeviceSimulator(Device):

@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
-from .mappings import *
-from ..device_serial import DeviceSerial
+from fw_upspack_v3.ups.mappings import *
+from fw_upspack_v3.device_serial import DeviceSerial
 
 
 class Device(DeviceSerial):

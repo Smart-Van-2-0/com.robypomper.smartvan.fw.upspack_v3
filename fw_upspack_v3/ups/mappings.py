@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
 from fw_upspack_v3.commons import *
-from ._definitions import *
-from ._dbus_descs import *
-from ._parsers import *
+from fw_upspack_v3.ups._definitions import *
+from fw_upspack_v3.ups._dbus_descs import *
+from fw_upspack_v3.ups._parsers import *
 
 
 # Given an VERSION, this object returns all his info and meta-data
