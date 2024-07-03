@@ -3,7 +3,7 @@
 import logging
 from pydbus.generic import signal
 
-from .mappings import *
+from fw_upspack_v3.ups.mappings import *
 
 logger = logging.getLogger()
 
@@ -11,11 +11,12 @@ logger = logging.getLogger()
 class DBusObject:
     PropertiesChanged = signal()
 
-    def __init__(self, dbus_name, pid, dbus_obj_path=None, dbus_iface=None, enable_cache=False):
+    def __init__(self, main_obj, dbus_name, pid, dbus_obj_path=None, dbus_iface=None, enable_cache=False):
         if pid not in PID:
             raise NotImplementedError("Device with '{}' PID not implemented."
                                       .format(pid))
 
+        self._obj = main_obj
         self._cached_properties = {} if enable_cache else None
 
         self.dbus_name = dbus_name
@@ -48,3 +49,8 @@ class DBusObject:
             self.PropertiesChanged(self.dbus_iface, {property_name: value}, [])
         except KeyError as err:
             raise NameError("Property {} not registered on current DBUs iface".format(err)) from err
+
+    def __getattr__(self, attr):
+        if attr not in self.__dict__:
+            return getattr(self._obj, attr)
+        return super().__getattr__(attr)
