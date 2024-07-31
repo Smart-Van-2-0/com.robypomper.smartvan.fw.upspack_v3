@@ -22,7 +22,7 @@ of an elaboration.
 ### Direct
 
 Direct properties are defined into the `PROPS_CODES` table into
-the [mappings.py](/fw_victron/mappings.py) file.
+the [mappings.py](/fw_upspack_v3/ups/mappings.py) file.
 
 For each property are defined following fields:
 
