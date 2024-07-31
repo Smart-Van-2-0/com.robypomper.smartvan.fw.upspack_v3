@@ -17,7 +17,9 @@ DEV_DBUS_DESC_UPSSmart = '''<node>
     <property name="voltage_out" type="d" access="read">
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="true"/>
     </property>
-    
+    <property name="voltage_out_millis" type="d" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="true"/>
+    </property>
   </interface>
 </node>
 '''

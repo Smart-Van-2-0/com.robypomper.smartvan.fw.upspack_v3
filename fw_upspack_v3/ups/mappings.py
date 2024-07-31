@@ -19,11 +19,12 @@ PROPS_CODES = {
             "parser": props_parser_vin},
     "BATCAP": {"name": "battery_capacity", "desc": "UPS's battery capacity in percentage",
                "parser": props_parser_int},
-    "Vout": {"name": "voltage_out", "desc": "UPS's output voltage in mV",
+    "Vout": {"name": "voltage_out_millis", "desc": "UPS's output voltage in mV",
              "parser": props_parser_int},
 }
 
 
 CALC_PROPS_CODES = {
-    # N/A
+    "voltage_out": {"depends_on": "voltage_out_millis",
+                "calculator": calc_voltage_out},
 }
