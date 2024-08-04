@@ -8,7 +8,7 @@ the [Smart Van Project](https://smartvan.johnosproject.org/).
 
 **FW Name:** FW UPS Pack v3<br />
 **FW Group:** com.robypomper.smartvan.fw.upspack_v3<br />
-**FW Version:** 1.0.1-DEV
+**FW Version:** 1.0.1
 
 [README](README.md) | [CHANGELOG](CHANGELOG.md) | [TODOs](TODOs.md) | [LICENCE](LICENCE.md)
 
