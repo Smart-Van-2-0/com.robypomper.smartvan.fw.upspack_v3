@@ -1,0 +1,20 @@
+
+pi@raspberrypi:~/dev/fw_ups $ python run.py --port /dev/ttyAMA3
+(2024-08-04 17:50:51,813) [INFO   ] com.robypomper.smartvan.fw.ups:FW UPS Pack v3 (Version: 1.0.1-DEV)
+(2024-08-04 16:32:16,415) [INFO   ] Connecting to '/dev/ttyAMA3 at 9600'...
+(2024-08-04 16:32:17,813) [INFO   ] Connected to Device 'V3.2P'.
+(2024-08-04 16:32:17,817) [INFO   ] DBus Internal Loop starting...
+(2024-08-04 16:32:17,818) [INFO   ] DBus Internal Loop started.
+(2024-08-04 16:32:17,819) [INFO   ] Publish DBus 'com.upspack_v3' interface on 'com.upspack' DBus and '/ups_smart_v3_2p' object path.
+(2024-08-04 16:32:17,836) [INFO   ] Start FW UPS Pack v3 Main Loop. Press (Ctrl+C) to quit.
+
+
+(2024-08-04 16:32:17,836) [INFO   ]   ==== ==== ==== ====
+(2024-08-04 16:32:19,859) [INFO   ] R ==> firmware_version = 'V3.2P'
+(2024-08-04 16:32:19,861) [INFO   ] R ==> state_operation  = 'True'
+(2024-08-04 16:32:19,862) [INFO   ] R ==> battery_capacity = '100'
+(2024-08-04 16:32:19,863) [INFO   ] R ==> voltage_out_millis = '5250'
+(2024-08-04 16:32:19,865) [INFO   ] C ==> voltage_out      = '5.25'
+
+
+(2024-08-04 16:32:29,875) [INFO   ]   ==== ==== ==== ====
