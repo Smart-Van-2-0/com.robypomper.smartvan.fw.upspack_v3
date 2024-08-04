@@ -14,7 +14,7 @@ DEV_DBUS_DESC_UPSSmart = '''<node>
     <property name="battery_capacity" type="d" access="read">
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="true"/>
     </property>
-    <property name="voltage_out" type="d" access="read">
+    <property name="voltage_out" type="i" access="read">
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="true"/>
     </property>
     <property name="voltage_out_millis" type="d" access="read">
