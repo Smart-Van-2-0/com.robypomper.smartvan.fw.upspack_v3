@@ -20,8 +20,8 @@ class DeviceSimulator(Device):
         self._data = {
             'SmartUPS': 'V3.2P',
             'Vin': 'GOOD' if random.randint(0, 1) else "NG",
-            'BATCAP': max(min(regenerateValue(self._data['BATCAP'], 1), 100), 0),
-            'Vout': max(min(regenerateValue(self._data['Vout'], 10), 5400), 5100),
+            'BATCAP': str(int(regenerateValueMaxMin(self._data['BATCAP'], 1, 0, 100))),
+            'Vout': str(int(regenerateValueMaxMin(self._data['Vout'], 10, 5100, 5400))),
         }
         return True
 
