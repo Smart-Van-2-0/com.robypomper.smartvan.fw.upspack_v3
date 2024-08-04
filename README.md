@@ -122,9 +122,9 @@ Module's files can be grouped in 2 categories:
   class that represent aDBus object to publish
 * [dbus/daemon.py](/fw_upspack_v3/dbus/daemon.py):
   methods to handle the DBus daemon
-* [commons.py](/fw_upspack_v3/base/commons.py):
+* [base/commons.py](/fw_upspack_v3/base/commons.py):
   commons properties parsers and simulator methods
-* [device.py](/fw_upspack_v3/base/device.py):
+* [base/device.py](/fw_upspack_v3/base/device.py):
   base class for devices
-* [device_serial.py](/fw_upspack_v3/base/device_serial.py):
+* [base/device_serial.py](/fw_upspack_v3/base/device_serial.py):
   base implementation for serial devices
