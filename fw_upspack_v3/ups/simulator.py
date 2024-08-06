@@ -15,6 +15,7 @@ class DeviceSimulator(Device):
             'BATCAP': "100",
             'Vout': '5250'
         }
+        self._is_connected = True
 
     def refresh(self, reset_data=False) -> bool:
         self._data = {
