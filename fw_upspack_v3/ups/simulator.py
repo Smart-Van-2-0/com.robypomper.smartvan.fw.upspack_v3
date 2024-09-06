@@ -1,14 +1,15 @@
 #!/usr/bin/python3
 
+import random
+
 from fw_upspack_v3.ups.device import Device
-from fw_upspack_v3.ups.mappings import *
-from fw_upspack_v3.commons import regenerateValue
+from fw_upspack_v3.base.commons import regenerateValueMaxMin
 
 
 class DeviceSimulator(Device):
 
-    def __init__(self, device: str = '/dev/ttyAMA0', speed: int = 9600):
-        super().__init__(device, speed, False)
+    def __init__(self, device, speed):
+        super().__init__(device, speed, auto_refresh=False)
         self._data = {
             'SmartUPS': 'V3.2P',
             'Vin': 'GOOD',

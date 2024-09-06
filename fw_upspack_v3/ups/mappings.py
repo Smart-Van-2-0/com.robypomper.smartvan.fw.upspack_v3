@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from fw_upspack_v3.commons import *
+from fw_upspack_v3.base.commons import *
 from fw_upspack_v3.ups._definitions import *
 from fw_upspack_v3.ups._dbus_descs import *
 from fw_upspack_v3.ups._parsers import *
