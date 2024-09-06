@@ -3,8 +3,8 @@
 import os
 import serial
 
-from fw_upspack_v3.device import DeviceAbs
-from fw_upspack_v3.commons import dev_type_to_code
+from fw_upspack_v3.base.device import DeviceAbs
+from fw_upspack_v3.base.commons import dev_type_to_code
 
 
 class DeviceSerial(DeviceAbs):
