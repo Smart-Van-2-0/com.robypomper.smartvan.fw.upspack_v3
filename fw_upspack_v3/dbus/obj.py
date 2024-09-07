@@ -3,8 +3,6 @@
 import logging
 from pydbus.generic import signal
 
-from fw_upspack_v3.ups.mappings import *
-
 logger = logging.getLogger()
 
 
