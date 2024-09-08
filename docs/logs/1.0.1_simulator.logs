@@ -1,0 +1,22 @@
+
+(venv) robypomper@roby-hp:~/Workspaces/SmartVan/Sources/com.robypomper.smartvan.fw.upspack_v3$ python run.py --simulate
+(2024-08-04 17:50:51,813) [INFO   ] com.robypomper.smartvan.fw.ups:FW UPS Pack v3 (Version: 1.0.1-DEV)
+(2024-08-04 17:33:39,841) [INFO   ] DBus Internal Loop starting...
+(2024-08-04 17:33:39,841) [INFO   ] DBus Internal Loop started.
+(2024-08-04 17:33:39,841) [INFO   ] Publish DBus 'com.upspack_v3' interface on 'com.upspack' DBus and '/ups_smart_v3_2p' object path.
+(2024-08-04 17:33:39,844) [INFO   ] Start FW UPS Pack v3 Main Loop. Press (Ctrl+C) to quit.
+
+
+(2024-08-04 17:33:39,844) [INFO   ]   ==== ==== ==== ====
+(2024-08-04 17:33:39,844) [INFO   ] R ==> firmware_version = 'V3.2P'
+(2024-08-04 17:33:39,844) [INFO   ] R ==> state_operation  = 'True'
+(2024-08-04 17:33:39,844) [INFO   ] R ==> battery_capacity = '100'
+(2024-08-04 17:33:39,845) [INFO   ] R ==> voltage_out_millis = '5248'
+(2024-08-04 17:33:39,845) [INFO   ] C ==> voltage_out      = '5.248'
+
+
+(2024-08-04 17:33:44,850) [INFO   ]   ==== ==== ==== ====
+(2024-08-04 17:33:44,850) [INFO   ] R ==> state_operation  = 'False'
+(2024-08-04 17:33:44,850) [INFO   ] R ==> battery_capacity = '99'
+(2024-08-04 17:33:44,850) [INFO   ] R ==> voltage_out_millis = '5246'
+(2024-08-04 17:33:44,851) [INFO   ] C ==> voltage_out      = '5.246'

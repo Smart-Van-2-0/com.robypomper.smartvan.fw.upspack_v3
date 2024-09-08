@@ -1,0 +1,35 @@
+
+pi@raspberrypi:~/dev/fw_ups $ python run.py --dev --port /dev/ttyAMA3
+[INFO   ] (2024-08-04 16:52:41,256) run.py::143 com.robypomper.smartvan.fw.ups:FW UPS Pack v3 (Version: 1.0.1-DEV)
+[DEBUG  ] (2024-08-04 16:52:41,257) run.py::144 Execution mode: DEV
+[DEBUG  ] (2024-08-04 16:52:41,257) run.py::147 Execution args: ['--port', '/dev/ttyAMA3', '--dev']
+[INFO   ] (2024-08-04 16:31:08,000) run.py::160 Connecting to '/dev/ttyAMA3 at 9600'...
+[DEBUG  ] (2024-08-04 16:31:08,001) run.py::162 Read first data from device...
+[INFO   ] (2024-08-04 16:31:09,327) run.py::181 Connected to Device 'V3.2P'.
+[DEBUG  ] (2024-08-04 16:31:09,327) daemon.py::27 Initialize DBus session...
+[DEBUG  ] (2024-08-04 16:31:09,334) daemon.py::31 DBus session initialized successfully
+[INFO   ] (2024-08-04 16:31:09,335) daemon.py::40 DBus Internal Loop starting...
+[INFO   ] (2024-08-04 16:31:09,336) daemon.py::61 DBus Internal Loop started.
+[INFO   ] (2024-08-04 16:31:09,336) obj.py::33 Publish DBus 'com.upspack_v3' interface on 'com.upspack' DBus and '/ups_smart_v3_2p' object path.
+[INFO   ] (2024-08-04 16:31:09,351) run.py::225 Start FW UPS Pack v3 Main Loop. Press (Ctrl+C) to quit.
+
+
+[INFO   ] (2024-08-04 16:31:09,351) run.py::228   ==== ==== ==== ====
+[DEBUG  ] (2024-08-04 16:31:09,352) run.py::229 Start fetch/pull device
+[DEBUG  ] (2024-08-04 16:31:11,371) obj.py::46 Object '/ups_smart_v3_2p' property update 'com.upspack_v3.firmware_version = V3.2P'.
+[INFO   ] (2024-08-04 16:31:11,373) run.py::292 R ==> firmware_version = 'V3.2P'
+[DEBUG  ] (2024-08-04 16:31:11,374) obj.py::46 Object '/ups_smart_v3_2p' property update 'com.upspack_v3.state_operation = True'.
+[INFO   ] (2024-08-04 16:31:11,376) run.py::292 R ==> state_operation  = 'True'
+[DEBUG  ] (2024-08-04 16:31:11,376) obj.py::46 Object '/ups_smart_v3_2p' property update 'com.upspack_v3.battery_capacity = 100'.
+[INFO   ] (2024-08-04 16:31:11,378) run.py::292 R ==> battery_capacity = '100'
+[DEBUG  ] (2024-08-04 16:31:11,379) obj.py::46 Object '/ups_smart_v3_2p' property update 'com.upspack_v3.voltage_out_millis = 5250'.
+[INFO   ] (2024-08-04 16:31:11,381) run.py::292 R ==> voltage_out_millis = '5250'
+[DEBUG  ] (2024-08-04 16:31:11,382) obj.py::46 Object '/ups_smart_v3_2p' property update 'com.upspack_v3.voltage_out = 5.25'.
+[INFO   ] (2024-08-04 16:31:11,384) run.py::336 C ==> voltage_out      = '5.25'
+[DEBUG  ] (2024-08-04 16:31:11,384) run.py::325 Value cached for 'voltage_out' <5.25>
+[DEBUG  ] (2024-08-04 16:31:11,385) run.py::250 End fetch/pull device
+
+
+[INFO   ] (2024-08-04 16:31:21,396) run.py::228   ==== ==== ==== ====
+[DEBUG  ] (2024-08-04 16:31:21,396) run.py::229 Start fetch/pull device
+[DEBUG  ] (2024-08-04 16:31:22,615) run.py::250 End fetch/pull device
