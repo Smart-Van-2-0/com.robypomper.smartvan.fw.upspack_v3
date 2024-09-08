@@ -22,7 +22,7 @@ of an elaboration.
 ### Direct
 
 Direct properties are defined into the `PROPS_CODES` table into
-the [mappings.py](/fw_victron/mappings.py) file.
+the [mappings.py](/fw_upspack_v3/ups/mappings.py) file.
 
 For each property are defined following fields:
 
@@ -36,7 +36,7 @@ For each property are defined following fields:
 | `SmartUPS`  | `firmware_version`   | UPS's firmware version               | `props_parser_str` |
 | `Vin`       | `state_operation`    | UPS's charging state (True=Charging) | `props_parser_vin` |
 | `BATCAP`    | `battery_capacity`   | UPS's battery capacity in percentage | `props_parser_int` |
-| `Vout`      | `voltage_out`        | UPS's output voltage in mV           | `props_parser_int` |
+| `Vout`      | `voltage_out_millis` | UPS's output voltage in mV           | `props_parser_int` |
 
 Parser methods are defined into [_parsers.py](/fw_upspack_v3/ups/_parsers.py)
 file. Depending on which DBus property's they are mapped for, they can return
@@ -59,11 +59,9 @@ For each calculated property are defined following fields:
 * `depends_on`: the list of properties on which the current property depends
 * `calculator`: the method to use to elaborate the property
 
-| Prop.'s Name on DBus | Description | Depends on | Calculator method |
-|----------------------|-------------|------------|-------------------|
-| --                   | --          | --         | --                |
-
-**No calculated properties are used from this script. **
+| Prop.'s Name on DBus | Description                  | Depends on           | Calculator method  |
+|----------------------|------------------------------|----------------------|--------------------|
+| `voltage_out`        | UPS' output voltage in volts | `voltage_out_millis` | `calc_voltage_out` |
 
 All methods used to elaborate the properties, receives the properties cache as
 param. So they can use that list to get all properties read from the device (
@@ -79,4 +77,5 @@ property, the table define if it will be exported by the column's device type.
 | `firmware_version`   | string | Yes             |
 | `state_operation`    | bool   | Yes             |
 | `battery_capacity`   | int    | Yes             |
-| `voltage_out`        | int    | Yes             |
+| `voltage_out_millis` | int    | Yes             |
+| `voltage_out`        | double | Yes             |

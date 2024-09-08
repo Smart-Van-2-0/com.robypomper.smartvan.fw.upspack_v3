@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 from fw_upspack_v3.ups.mappings import *
-from fw_upspack_v3.device_serial import DeviceSerial
+from fw_upspack_v3.base.device_serial import DeviceSerial
 
 
 class Device(DeviceSerial):
@@ -9,8 +9,12 @@ class Device(DeviceSerial):
     Device class for UPS Pack devices communicating via Serial port
     """
 
+    DELIMITER = "$ SmartUPS"
+    FIELD_PID = "SmartUPS"
+    FIELD_TYPE = "--"
+
     def __init__(self, device: str = '/dev/ttyAMA0', speed: int = 9600, auto_refresh=True):
-        super().__init__(device, speed, "$ SmartUPS", auto_refresh)
+        super().__init__(device, speed, self.DELIMITER, self.FIELD_PID, self.FIELD_TYPE, auto_refresh)
 
         self.cached_version = None
 
@@ -34,23 +38,14 @@ class Device(DeviceSerial):
         return self.cached_version
 
     @property
-    def device_pid(self) -> "str | None":
-        """
-        Returns the device PID, it can be used as index for the PID dict.
-        In the UPS Pack case is the device's version.
-        """
-
-        if self.cached_version is None:
-            self.cached_version = self._data['SmartUPS']
-
-        return self.cached_version
-
-    @property
     def device_type(self) -> str:
         """ Returns the device type """
         if self.cached_type is None:
             if self.device_pid is not None:
-                self.cached_type = PID[self.device_pid]['type']
+                try:
+                    self.cached_type = PID[self.device_pid]['type']
+                except KeyError as err:
+                    raise SystemError("Unknown PID '{}' read from device".format(self.device_pid)) from err
 
         return self.cached_type if self.cached_type is not None else DEV_TYPE_UNKNOWN
 

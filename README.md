@@ -8,7 +8,7 @@ the [Smart Van Project](https://smartvan.johnosproject.org/).
 
 **FW Name:** FW UPS Pack v3<br />
 **FW Group:** com.robypomper.smartvan.fw.upspack_v3<br />
-**FW Version:** 1.0.0
+**FW Version:** 1.0.1
 
 [README](README.md) | [CHANGELOG](CHANGELOG.md) | [TODOs](TODOs.md) | [LICENCE](LICENCE.md)
 
@@ -122,9 +122,9 @@ Module's files can be grouped in 2 categories:
   class that represent aDBus object to publish
 * [dbus/daemon.py](/fw_upspack_v3/dbus/daemon.py):
   methods to handle the DBus daemon
-* [commons.py](/fw_upspack_v3/commons.py):
+* [base/commons.py](/fw_upspack_v3/base/commons.py):
   commons properties parsers and simulator methods
-* [device.py](/fw_upspack_v3/device.py):
+* [base/device.py](/fw_upspack_v3/base/device.py):
   base class for devices
-* [device_serial.py](/fw_upspack_v3/device_serial.py):
+* [base/device_serial.py](/fw_upspack_v3/base/device_serial.py):
   base implementation for serial devices
